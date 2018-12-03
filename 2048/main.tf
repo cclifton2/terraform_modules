@@ -98,7 +98,8 @@ resource "aws_ecr_repository" "this" {
 }
 
 module "ecs_cluster" {
-  source                             = "../../terraform-modules/ecs_cluster"                  #"git::git@github.com:contextmedia/terraform-infrastructure-live.git//modules//ecs_cluster"
+  # source                             = "../../terraform-modules/ecs_cluster"                  
+  source = "github.com/gabcoyne/terraform_modules/2048"
   target_groups                      = ["${module.alb.target_group_arns}"]
   app_name                           = "2048"
   backup                             = "${var.backup}"
