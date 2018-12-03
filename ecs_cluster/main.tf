@@ -83,7 +83,7 @@ resource "aws_iam_role_policy_attachment" "ecs_service_autoscaling_role" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceAutoscaleRole"
 }
 
-resource "aws_ecs_cluster" "ecs_cluster" {
+resource "aws_this" "this" {
   name = "${var.environment}-${var.app_name}"
 }
 
@@ -94,7 +94,7 @@ resource "aws_launch_configuration" "lc" {
 
   key_name                    = "${var.ssh_key_name}"
   security_groups             = ["${var.security_groups}"]
-  user_data                   = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.ecs_cluster.name} >> /etc/ecs/ecs.config"
+  user_data                   = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.this.name} >> /etc/ecs/ecs.config"
   associate_public_ip_address = true
   iam_instance_profile        = "${aws_iam_instance_profile.container_instance.name}"
 
@@ -105,7 +105,7 @@ resource "aws_launch_configuration" "lc" {
 
 resource "aws_autoscaling_group" "create_asg" {
   name_prefix               = "${var.environment}-${var.app_name}-"
-  launch_configuration      = "${aws_launch_configuration.lc.name}"
+  launch_configuration      = "${aws_launch_configuration.this.name}"
   min_size                  = "${var.ecs_min_nodes}"
   max_size                  = "${var.ecs_max_nodes}"
   desired_capacity          = "${var.desired_count}"
@@ -121,7 +121,7 @@ resource "aws_autoscaling_group" "create_asg" {
   tags = [
     {
       key                 = "Name"
-      value               = "${aws_ecs_cluster.ecs_cluster.name}"
+      value               = "${aws_ecs_cluster.this.name}"
       propagate_at_launch = true
     },
     {
@@ -176,7 +176,7 @@ resource "aws_ecs_service" "ecs_service" {
   name                               = "${var.environment}-${var.app_name}"
   task_definition                    = "${aws_ecs_task_definition.task_def.family}:${aws_ecs_task_definition.task_def.revision}"
   desired_count                      = "${var.desired_count}"
-  cluster                            = "${aws_ecs_cluster.ecs_cluster.arn}"
+  cluster                            = "${aws_ecs_cluster.this.arn}"
   deployment_maximum_percent         = "${var.deployment_maximum_percent}"
   deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
 
