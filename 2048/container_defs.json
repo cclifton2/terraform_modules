@@ -15,7 +15,7 @@
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${environment}-${app_name}",
+        "awslogs-group": "${environment}-2048",
         "awslogs-region": "${region}",
         "awslogs-stream-prefix": "web"
       }

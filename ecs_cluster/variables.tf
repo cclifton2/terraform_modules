@@ -1,12 +1,7 @@
 variable "region" {}
 
 variable "environment" {
-  description = "OH environment (one of development, qa, staging, uat, production). Defined in app main .tfvars"
-}
-
-variable "department" {
-  description = "OH department (one of platform, devops, finance, product analytics). Defined in app main .tfvars"
-  default     = ""
+  description = "Environment (one of dev, stage, prod)"
 }
 
 variable "backup" {
