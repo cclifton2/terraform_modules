@@ -152,5 +152,5 @@ resource "aws_route53_record" "www" {
   name    = "2048.coyne.link"
   type    = "CNAME"
   ttl     = "60"
-  records = ["${module.elb.dns_name}"]
+  records = ["${module.elb.this_elb_dns_name}"]
 }
