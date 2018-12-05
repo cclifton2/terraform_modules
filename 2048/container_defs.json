@@ -1,6 +1,6 @@
 [
   {
-    "name": "${app_name}",
+    "name": "2048",
     "image": "alexwhen/docker-2048",
     "cpu": 0,
     "memory": null,
