@@ -23,18 +23,6 @@ data "aws_route53_zone" "this" {
   name = "coyne.link"
 }
 
-module "alb" {
-  source  = "terraform-aws-modules/alb/aws"
-  version = "3.5.0"
-
-  vpc_id              = "${data.terraform_remote_state.vpc.vpc_id}"
-  load_balancer_name  = "${terraform.workspace}-2048"
-  security_groups     = ["${var.security_groups}"]
-  log_bucket_name     = "${lookup(var.logging_bucket, terraform.workspace)}"
-  log_location_prefix = "alb-${terraform.workspace}-2048"
-  subnets             = ["${data.terraform_remote_state.vpc.public_subnets}"]
-}
-
 ######
 # ELB
 ######
@@ -132,7 +120,8 @@ resource "aws_ecr_repository" "ecr_repo" {
 }
 
 module "ecs_cluster" {
-  source                             = "../../terraform-modules/ecs_cluster"
+  source = "github.com/gabcoyne/terraform_modules/ecs_cluster"
+  # source                             = "../../terraform-modules/ecs_cluster"
   app_name                           = "2048"
   backup                             = "${var.backup}"
   region                             = "${var.region}"
