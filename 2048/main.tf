@@ -1,13 +1,3 @@
-data "terraform_remote_state" "vpc" {
-  backend = "s3"
-
-  config {
-    bucket = "${lookup(var.remote_state_bucket, terraform.workspace)}"
-    key    = "${lookup(var.remote_state_vpc_key, terraform.workspace)}"
-    region = "${lookup(var.remote_state_region, terraform.workspace)}"
-  }
-}
-
 data "template_file" "container_defs" {
   template = "${file("${path.module}/container_defs.json")}"
 
@@ -32,7 +22,7 @@ module "elb" {
 
   name = "2048-elb"
 
-  subnets         = ["${data.terraform_remote_state.vpc.public_subnets}"]
+  subnets         = ["${var.public_subnets}"]
   security_groups = ["${var.security_groups}"]
   internal        = false
 
