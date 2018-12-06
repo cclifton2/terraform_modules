@@ -1,4 +1,14 @@
-data "template_file" "container_defs" {
+# data "terraform_remote_state" "vpc" {
+#   backend = "s3"
+#
+#   config {
+#     bucket = "${lookup(var.remote_state_bucket, terraform.workspace)}"
+#     key    = "${lookup(var.remote_state_vpc_key, terraform.workspace)}"
+#     region = "${lookup(var.remote_state_region, terraform.workspace)}"
+#   }
+# }
+
+var.public_subnetsdata "template_file" "container_defs" {
   template = "${file("${path.module}/container_defs.json")}"
 
   vars {
@@ -120,7 +130,7 @@ module "ecs_cluster" {
   ssh_key_name                       = "${var.ssh_key_name}"
   security_groups                    = ["${var.security_groups}"]
   template_file                      = "${data.template_file.container_defs.rendered}"
-  subnet_ids                         = ["${data.terraform_remote_state.vpc.public_subnets}"]
+  subnet_ids                         = ["${var.public_subnets}"]
   deployment_maximum_percent         = "100"
   deployment_minimum_healthy_percent = "0"
   termination_policies               = ["OldestInstance"]
