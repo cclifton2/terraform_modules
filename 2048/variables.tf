@@ -12,7 +12,7 @@ variable "remote_state_bucket" {
   default = {
     "dev"    = "gloom-terraform"
     "stage"  = "gloom-terraform"
-    "master" = "gloom-terraform"
+    "prod" = "gloom-terraform"
   }
 }
 
@@ -20,7 +20,7 @@ variable "remote_state_vpc_key" {
   default = {
     "dev"    = "gloom.tfstate"
     "stage"  = "gloom.tfstate"
-    "master" = "gloom.tfstate"
+    "prod" = "gloom.tfstate"
   }
 }
 
@@ -28,7 +28,7 @@ variable "remote_state_region" {
   default = {
     "dev"    = "us-west-2"
     "stage"  = "us-west-2"
-    "master" = "us-west-2"
+    "prod" = "us-west-2"
   }
 }
 
@@ -39,7 +39,7 @@ variable "logging_bucket" {
   default = {
     "dev"    = "gloom-logging"
     "stage"  = "gloom-logging"
-    "master" = "gloom-logging"
+    "prod" = "gloom-logging"
   }
 }
 
