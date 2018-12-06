@@ -32,7 +32,7 @@ module "elb" {
 
   name = "2048-elb"
 
-  subnets         = ["${var.public_subnets}"]
+  subnets         = "${var.public_subnets}"
   security_groups = ["${var.security_groups}"]
   internal        = false
 
@@ -55,19 +55,18 @@ module "elb" {
     },
   ]
 
-  access_logs = [
-    {
-      bucket = "my-access-logs-bucket"
-    },
-  ]
+  # access_logs = [
+  #   {
+  #     bucket = "gloom logs"
+  #   },
+  # ]
 
   // ELB attachments
   // number_of_instances = 2
   // instances           = ["i-06ff41a77dfb5349d", "i-4906ff41a77dfb53d"]
 
   tags = {
-    Owner       = "user"
-    Environment = "dev"
+    Environment = "${terraform.workspace}"
   }
 }
 
