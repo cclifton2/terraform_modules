@@ -8,7 +8,7 @@
 #   }
 # }
 
-var.public_subnetsdata "template_file" "container_defs" {
+data "template_file" "container_defs" {
   template = "${file("${path.module}/container_defs.json")}"
 
   vars {
