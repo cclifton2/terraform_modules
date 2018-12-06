@@ -43,7 +43,9 @@ variable "logging_bucket" {
   }
 }
 
-variable "public_subnets" {}
+variable "public_subnets" {
+  type = "list"
+}
 
 variable "vpc_id" {
   description = "placeholder until depends on is released in .12"
