@@ -37,7 +37,7 @@ module "alb" {
   http_tcp_listeners_count = "1"
   target_groups            = "${list(map("name", "2048-target-group", "backend_protocol", "HTTP", "backend_port", "8080"))}"
   target_groups_count      = "1"
-  logging_enabled = "${var.logging_enabled == "true" ? "true" : "false"}"
+  logging_enabled          = "${var.logging_enabled == "true" ? "true" : "false"}"
 }
 
 # module "alb" {

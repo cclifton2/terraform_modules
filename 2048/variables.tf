@@ -8,8 +8,6 @@ variable "backup" {
   default = "Backup"
 }
 
-# variable "ssl_cert" {}
-
 variable "remote_state_bucket" {
   default = {
     "dev"   = "gloom-terraform"
@@ -34,8 +32,6 @@ variable "remote_state_region" {
   }
 }
 
-# variable ssh_key_name {}
-
 #ALB Variables
 variable "logging_bucket" {
   default = {
@@ -43,6 +39,10 @@ variable "logging_bucket" {
     "stage" = "gloom-logging"
     "prod"  = "gloom-logging"
   }
+}
+
+variable "logging_enabled" {
+  default = "true"
 }
 
 # variable "public_subnets" {
