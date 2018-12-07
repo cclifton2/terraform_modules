@@ -31,7 +31,7 @@ module "alb" {
   log_bucket_name          = "${var.logging_enabled == "true" ? lookup(var.logging_bucket, terraform.workspace) : ""}"
   tags                     = "${map("Environment", "${terraform.workspace}")}"
   vpc_id                   = "${data.terraform_remote_state.vpc.vpc_id}"
-  https_listeners          = "${list(map("certificate_arn", "${data.terraform_remote_state.vpc.coyne_link_id}", "port", 443))}"
+  https_listeners          = "${list(map("certificate_arn", "${data.terraform_remote_state.vpc.coyne_link_arn}", "port", 443))}"
   https_listeners_count    = "1"
   http_tcp_listeners       = "${list(map("port", "80", "protocol", "HTTP"))}"
   http_tcp_listeners_count = "1"
@@ -151,7 +151,7 @@ module "ecs_cluster" {
   deployment_maximum_percent         = "100"
   deployment_minimum_healthy_percent = "0"
   termination_policies               = ["OldestInstance"]
-  service_load_balancer              = "${map("target_group_arn", module.alb.target_group_arns[0], "container_name", "2048", "container_port", "8080")}"
+  service_load_balancer              = "${map("target_group_arn", module.alb.target_group_arns[0], "container_name", "2048", "container_port", "80")}"
 }
 
 resource "aws_cloudwatch_log_group" "app_cloudwatch_log_group" {
