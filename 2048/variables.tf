@@ -1,14 +1,14 @@
 variable region {}
 
-variable "security_groups" {
-  type = "list"
-}
+# variable "security_groups" {
+#   type = "list"
+# }
 
 variable "backup" {
   default = "Backup"
 }
 
-variable "ssl_cert" {}
+# variable "ssl_cert" {}
 
 variable "remote_state_bucket" {
   default = {
@@ -34,7 +34,7 @@ variable "remote_state_region" {
   }
 }
 
-variable ssh_key_name {}
+# variable ssh_key_name {}
 
 #ALB Variables
 variable "logging_bucket" {
@@ -45,10 +45,10 @@ variable "logging_bucket" {
   }
 }
 
-variable "public_subnets" {
-  type = "list"
-}
+# variable "public_subnets" {
+#    type = "list"
+# }
 
-variable "vpc_id" {
-  description = "placeholder until depends on is released in .12"
-}
+# variable "vpc_id" {
+#   description = "placeholder until depends on is released in .12"
+# }
