@@ -28,6 +28,7 @@ module "alb" {
   load_balancer_name       = "${terraform.workspace}-2048"
   subnets                  = "${data.terraform_remote_state.vpc.public_subnets}"
   security_groups          = ["${data.terraform_remote_state.vpc.2048_sg}"]
+  log_bucket_name          = "${lookup(var.logging_bucket, terraform.workspace)}"
   tags                     = "${map("Environment", "${terraform.workspace}")}"
   vpc_id                   = "${data.terraform_remote_state.vpc.vpc_id}"
   https_listeners          = "${list(map("certificate_arn", "${data.terraform_remote_state.vpc.coyne_link_id}", "port", 443))}"
