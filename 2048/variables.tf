@@ -4,9 +4,11 @@ variable "security_groups" {
   type = "list"
 }
 
-variable backup {
+variable "backup" {
   default = "Backup"
 }
+
+variable "ssl_cert" {}
 
 variable "remote_state_bucket" {
   default = {
