@@ -20,9 +20,9 @@ variable "remote_state_bucket" {
 
 variable "remote_state_vpc_key" {
   default = {
-    "dev"   = "gloom.tfstate"
-    "stage" = "gloom.tfstate"
-    "prod"  = "gloom.tfstate"
+    "dev"   = "aws/gloom.tfstate"
+    "stage" = "aws/gloom.tfstate"
+    "prod"  = "aws/gloom.tfstate"
   }
 }
 

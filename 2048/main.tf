@@ -29,8 +29,8 @@ module "alb" {
   subnets                  = "${var.public_subnets}"
   security_groups          = "${var.security_groups}"
   tags                     = "${map("Environment", "${terraform.workspace}")}"
-  vpc_id                   = "${var.vpc_id}"
-  https_listeners          = "${list(map("certificate_arn", "${var.ssl_cert}", "port", 443))}"
+  vpc_id                   = "${data.terraform_remote_state.vpc.vpc_id}"
+  https_listeners          = "${list(map("certificate_arn", "${data.terraform_remote_state.vpc.coyne_link_id}", "port", 443))}"
   https_listeners_count    = "1"
   http_tcp_listeners       = "${list(map("port", "80", "protocol", "HTTP"))}"
   http_tcp_listeners_count = "1"
@@ -142,10 +142,10 @@ module "ecs_cluster" {
   region                             = "${var.region}"
   environment                        = "${terraform.workspace}"
   ecs_ami                            = "${data.aws_ami.ecs_optimized_ami.image_id}"
-  ssh_key_name                       = "${var.ssh_key_name}"
+  ssh_key_name                       = "${data.terraform_remote_state.vpc.personal_key0}"
   security_groups                    = ["${var.security_groups}"]
   template_file                      = "${data.template_file.container_defs.rendered}"
-  subnet_ids                         = ["${var.public_subnets}"]
+  subnet_ids                         = ["${data.terraform_remote_state.vpc.private_subnet_ids}"]
   deployment_maximum_percent         = "100"
   deployment_minimum_healthy_percent = "0"
   termination_policies               = ["OldestInstance"]
