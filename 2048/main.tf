@@ -23,40 +23,53 @@ data "aws_route53_zone" "this" {
   name = "coyne.link"
 }
 
-
-
 module "alb" {
-   source              = "git::git@github.com:contextmedia/terraform-infrastructure-live.git//modules//load_balancer?ref=v1.0.7"
-   load_balancer_name  = "${terraform.workspace}-2048"
-   security_groups     = ["sg-3187805a"]
-   log_bucket_name     = "${lookup(var.logging_bucket, terraform.workspace)}"
-   log_location_prefix = "alb-${terraform.workspace}-2048"
-   subnets             = ["${data.aws_subnet_ids.public.ids}"]
+  source                        = "terraform-aws-modules/alb/aws"
+  load_balancer_name  = "${terraform.workspace}-2048"
+  subnets         = "${var.public_subnets}"
+  security_groups = "${var.security_groups}"
+  tags                          = "${map("Environment", "${terraform.workspace}")}"
+  vpc_id                = "${data.terraform_remote_state.vpc.vpc_id}"
+  https_listeners               = "${list(map("certificate_arn", "${var.ssl_cert}", "port", 443))}"
+  https_listeners_count         = "1"
+  http_tcp_listeners            = "${list(map("port", "80", "protocol", "HTTP"))}"
+  http_tcp_listeners_count      = "1"
+  target_groups                 = "${list(map("name", "2048-target-group", "backend_protocol", "HTTP", "backend_port", "8080"))}"
+  target_groups_count           = "1"
+}
 
-   tags = "${map("Application", "2048",
-                 "Environment", "${terraform.workspace}",
-                 "Department", "${var.department}",
-                 "Terraform", "true")}"
-
-   vpc_id                = "${data.terraform_remote_state.vpc.vpc_id}"
-   https_listeners       = "${list(map("certificate_arn", "${var.ssl_cert}", "port", 443))}"
-   https_listeners_count = "1"
-
-   # Brief deregistration delay - should not have long-running connections
-   target_groups = "${list(map("name", "${terraform.workspace}-2048",
-                               "backend_protocol", "HTTP",
-                               "backend_port", "8080",
-                               "deregistration_delay", "15",
-                               "health_check_path", "/",
-                               "health_check_interval", "15",
-                               "health_check_port", "traffic-port",
-                               "health_check_timeout", "14",
-                               "health_check_healthy_threshold", "3",
-                               "health_check_unhealthy_threshold", "3",
-                               "health_check_matcher", "200-299"))}"
-
-   target_groups_count = "1"
- }
+# module "alb" {
+#    source              = "git::git@github.com:contextmedia/terraform-infrastructure-live.git//modules//load_balancer?ref=v1.0.7"
+#    load_balancer_name  = "${terraform.workspace}-2048"
+#    security_groups     = ["${var.2048_sg}"]
+#    log_bucket_name     = "${lookup(var.logging_bucket, terraform.workspace)}"
+#    log_location_prefix = "alb-${terraform.workspace}-2048"
+#    subnets             = ["${data.aws_subnet_ids.public.ids}"]
+#
+#    tags = "${map("Application", "2048",
+#                  "Environment", "${terraform.workspace}",
+#                  "Department", "${var.department}",
+#                  "Terraform", "true")}"
+#
+#    vpc_id                = "${data.terraform_remote_state.vpc.vpc_id}"
+#    https_listeners       = "${list(map("certificate_arn", "${var.ssl_cert}", "port", 443))}"
+#    https_listeners_count = "1"
+#
+#    # Brief deregistration delay - should not have long-running connections
+#    target_groups = "${list(map("name", "${terraform.workspace}-2048",
+#                                "backend_protocol", "HTTP",
+#                                "backend_port", "8080",
+#                                "deregistration_delay", "15",
+#                                "health_check_path", "/",
+#                                "health_check_interval", "15",
+#                                "health_check_port", "traffic-port",
+#                                "health_check_timeout", "14",
+#                                "health_check_healthy_threshold", "3",
+#                                "health_check_unhealthy_threshold", "3",
+#                                "health_check_matcher", "200-299"))}"
+#
+#    target_groups_count = "1"
+#  }
 
 data "aws_ami" "ecs_optimized_ami" {
   most_recent = true
