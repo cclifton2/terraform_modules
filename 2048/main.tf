@@ -28,7 +28,7 @@ module "alb" {
   load_balancer_name       = "${terraform.workspace}-2048"
   subnets                  = "${data.terraform_remote_state.vpc.public_subnets}"
   security_groups          = ["${data.terraform_remote_state.vpc.2048_sg}"]
-  log_bucket_name          = "${lookup(var.logging_bucket, terraform.workspace)}"
+  log_bucket_name          = "${var.logging_enabled ? "true" lookup(var.logging_bucket, terraform.workspace) : ""}"
   tags                     = "${map("Environment", "${terraform.workspace}")}"
   vpc_id                   = "${data.terraform_remote_state.vpc.vpc_id}"
   https_listeners          = "${list(map("certificate_arn", "${data.terraform_remote_state.vpc.coyne_link_id}", "port", 443))}"
@@ -37,6 +37,7 @@ module "alb" {
   http_tcp_listeners_count = "1"
   target_groups            = "${list(map("name", "2048-target-group", "backend_protocol", "HTTP", "backend_port", "8080"))}"
   target_groups_count      = "1"
+  logging_enabled = "${var.logging_enabled == "true" ? "true" : "false"}"
 }
 
 # module "alb" {
