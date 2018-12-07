@@ -94,7 +94,7 @@ resource "aws_launch_configuration" "lc" {
 
   key_name                    = "${var.ssh_key_name}"
   security_groups             = ["${var.security_groups}"]
-  user_data                   = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.ecs_cluster.name} >> /etc/ecs/ecs.config"
+  user_data                   = "#!/bin/bash\necho "ECS_CLUSTER=${aws_ecs_cluster.ecs_cluster.name}" >> /etc/ecs/ecs.config"
   associate_public_ip_address = true
   iam_instance_profile        = "${aws_iam_instance_profile.container_instance.name}"
 
@@ -169,6 +169,7 @@ resource "aws_ecs_service" "ecs_service" {
   cluster                            = "${aws_ecs_cluster.ecs_cluster.arn}"
   deployment_maximum_percent         = "${var.deployment_maximum_percent}"
   deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
+
 
   load_balancer {
     target_group_arn = "${lookup(var.service_load_balancer, "target_group_arn")}"
