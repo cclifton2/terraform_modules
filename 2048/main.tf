@@ -134,12 +134,9 @@ module "ecs_cluster" {
   deployment_maximum_percent         = "100"
   deployment_minimum_healthy_percent = "0"
   termination_policies               = ["OldestInstance"]
-  service_load_balancer              = "${map("target_group_arn", module.alb.target_group_arns[0], "container_name", "2048", "container_port", "8080"}"
+  service_load_balancer              = "${map("target_group_arn", module.alb.target_group_arns[0], "container_name", "2048", "container_port", "8080")}"
 }
-load_balancer {
-  target_group_arn = "${lookup(var.service_load_balancer, "target_group_arn")}"
-  container_name   = "${lookup(var.service_load_balancer, "container_name")}"
-  container_port   = "${lookup(var.service_load_balancer, "container_port")}"
+
 resource "aws_cloudwatch_log_group" "app_cloudwatch_log_group" {
   name = "${terraform.workspace}-2048"
 
