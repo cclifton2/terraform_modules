@@ -24,18 +24,18 @@ data "aws_route53_zone" "this" {
 }
 
 module "alb" {
-  source                        = "terraform-aws-modules/alb/aws"
-  load_balancer_name  = "${terraform.workspace}-2048"
-  subnets         = "${var.public_subnets}"
-  security_groups = "${var.security_groups}"
-  tags                          = "${map("Environment", "${terraform.workspace}")}"
-  vpc_id                = "${data.terraform_remote_state.vpc.vpc_id}"
-  https_listeners               = "${list(map("certificate_arn", "${var.ssl_cert}", "port", 443))}"
-  https_listeners_count         = "1"
-  http_tcp_listeners            = "${list(map("port", "80", "protocol", "HTTP"))}"
-  http_tcp_listeners_count      = "1"
-  target_groups                 = "${list(map("name", "2048-target-group", "backend_protocol", "HTTP", "backend_port", "8080"))}"
-  target_groups_count           = "1"
+  source                   = "terraform-aws-modules/alb/aws"
+  load_balancer_name       = "${terraform.workspace}-2048"
+  subnets                  = "${var.public_subnets}"
+  security_groups          = "${var.security_groups}"
+  tags                     = "${map("Environment", "${terraform.workspace}")}"
+  vpc_id                   = "${var.vpc_id}"
+  https_listeners          = "${list(map("certificate_arn", "${var.ssl_cert}", "port", 443))}"
+  https_listeners_count    = "1"
+  http_tcp_listeners       = "${list(map("port", "80", "protocol", "HTTP"))}"
+  http_tcp_listeners_count = "1"
+  target_groups            = "${list(map("name", "2048-target-group", "backend_protocol", "HTTP", "backend_port", "8080"))}"
+  target_groups_count      = "1"
 }
 
 # module "alb" {
@@ -85,6 +85,7 @@ data "aws_ami" "ecs_optimized_ami" {
 resource "aws_ecr_repository" "ecr_repo" {
   name = "${terraform.workspace}-2048"
 }
+
 # ######
 # # ELB
 # ######
@@ -134,6 +135,7 @@ resource "aws_ecr_repository" "ecr_repo" {
 
 module "ecs_cluster" {
   source = "github.com/gabcoyne/terraform_modules/ecs_cluster"
+
   # source                             = "../../terraform-modules/ecs_cluster"
   app_name                           = "2048"
   backup                             = "${var.backup}"
