@@ -23,7 +23,7 @@ data "aws_route53_zone" "this" {
   name = "coyne.link"
 }
 
-data "aws_acm_certificate" "coyne.link" {
+data "aws_acm_certificate" "coyne_link" {
   domain   = "coyne.link"
   statuses = ["ISSUED"]
 }
@@ -36,7 +36,7 @@ module "alb" {
   log_bucket_name          = "${var.logging_enabled == "true" ? lookup(var.logging_bucket, terraform.workspace) : ""}"
   tags                     = "${map("Environment", "${terraform.workspace}")}"
   vpc_id                   = "${data.terraform_remote_state.vpc.vpc_id}"
-  https_listeners          = "${list(map("certificate_arn", "${data.acm_certificate.coyne_link.arn}", "port", 443))}"
+  https_listeners          = "${list(map("certificate_arn", "${data.aws_acm_certificate.coyne_link.arn}", "port", 443))}"
   https_listeners_count    = "1"
   http_tcp_listeners       = "${list(map("port", "80", "protocol", "HTTP"))}"
   http_tcp_listeners_count = "1"
