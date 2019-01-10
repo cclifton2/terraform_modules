@@ -33,3 +33,8 @@ output "ecs_autoscale_role_arn" {
 output "autoscaling_group_name" {
   value = "${aws_autoscaling_group.create_asg.name}"
 }
+
+
+output "data_inventory" {
+  value = "${module.data.name}"
+}

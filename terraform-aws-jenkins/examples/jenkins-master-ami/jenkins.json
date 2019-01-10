@@ -1,0 +1,44 @@
+{
+  "min_packer_version": "0.12.0",
+  "variables": {
+    "aws_region": "us-west-2",
+    "jenkins_version": "2.150.1"
+  },
+  "builders": [{
+    "name": "amazon-linux-ami",
+    "ami_name": "jenkins-amazon-linux-{{isotime | clean_ami_name}}",
+    "ami_description": "An Amazon Linux AMI that has Jenkins installed.",
+    "instance_type": "t2.micro",
+    "region": "{{user `aws_region`}}",
+    "type": "amazon-ebs",
+    "vpc_filter": {
+        "filters": {
+          "tag:Name": "prod-vpc",
+          "isDefault": "false"
+        }
+      },
+      "subnet_filter": {
+        "filters": {
+          "tag:Name": "*public-us-west-2a"
+        },
+        "random": true
+      },
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "*amzn-ami-hvm-*",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": ["amazon"],
+      "most_recent": true
+    },
+    "ssh_username": "ec2-user"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "script": "./install_jenkins",
+    "pause_before": "30s"
+  }]
+}

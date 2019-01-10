@@ -1,13 +1,3 @@
-variable "region" {}
-
-# variable "security_groups" {
-#   type = "list"
-# }
-
-variable "backup" {
-  default = "Backup"
-}
-
 variable "remote_state_bucket" {
   default = {
     "dev"   = "gloom-terraform"
@@ -30,17 +20,4 @@ variable "remote_state_region" {
     "stage" = "us-west-2"
     "prod"  = "us-west-2"
   }
-}
-
-#ALB Variables
-variable "logging_bucket" {
-  default = {
-    "dev"   = "gloom-logging"
-    "stage" = "gloom-logging"
-    "prod"  = "gloom-logging"
-  }
-}
-
-variable "logging_enabled" {
-  default = "true"
 }
