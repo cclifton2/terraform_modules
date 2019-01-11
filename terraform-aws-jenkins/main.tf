@@ -14,25 +14,21 @@ data "terraform_remote_state" "vpc" {
 
 data "aws_caller_identity" "current_account" {}
 
-data "aws_ami" "jenkins" {
-  most_recent = true
+data "template_file" "jenkins_master_ami" {
+  template = "${file("${path.module}/packer/jenkins-master-ami/packer.json")}"
 
-  # If we change the AWS Account in which test are run, update this value.
-  owners = ["${data.aws_caller_identity.current_account.account_id}"]
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+  vars = {
+    jnlp_port = "${var.jnlp_port}"
+    plugins   = "${join(" ", var.plugins)}"
   }
+}
 
-  filter {
-    name   = "is-public"
-    values = ["false"]   // flip to public when ready for release
-  }
+data "template_file" "jenkins_slave_ami" {
+  template = "${file("${path.module}/packer/jenkins-slave-ami/packer.json")}"
 
-  filter {
-    name   = "name"
-    values = ["jenkins-amazon-linux-*"]
+  vars = {
+    jnlp_port = "${var.jnlp_port}"
+    plugins   = "${join(" ", var.plugins)}"
   }
 }
 
@@ -40,6 +36,10 @@ resource "null_resource" "jenkins_master" {
   # Changes to any instance of the cluster requires re-provisioning
   triggers {
     cluster_instance_ids = "${join(",", aws_instance.cluster.*.id)}"
+  }
+
+  provisoner "local-exec" {
+    command = "g"
   }
 }
 
@@ -60,7 +60,7 @@ module "jenkins-master" {
   alb_prefix    = "${var.name == "" ? "jenkins" : join("-", list(var.name, "jenkins"))}"
   instance_type = "${var.instance_type_master}"
 
-  ami_id     = "${var.master_ami_id == "" ? data.aws_ami.jenkins.image_id : var.master_ami_id}"
+  # ami_id     =  #"${var.master_ami_id == "" ? data.aws_ami.jenkins.image_id : var.master_ami_id}"
   user_data  = ""
   setup_data = "${data.template_file.setup_data_master.rendered}"
 

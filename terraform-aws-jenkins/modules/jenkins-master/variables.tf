@@ -7,9 +7,9 @@ variable "environment" {
   default     = ""
 }
 
-variable "ami_id" {
-  description = "The ID of the AMI to run in this Jenkins master instance"
-}
+# variable "ami_id" {
+#   description = "The ID of the AMI to run in this Jenkins master instance"
+# }
 
 variable "instance_type" {
   description = "Instance Type to use for Jenkins master"

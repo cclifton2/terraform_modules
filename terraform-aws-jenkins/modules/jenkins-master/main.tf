@@ -35,9 +35,31 @@ resource "aws_elb" "ourapp" {
 
 */
 
+data "aws_ami" "jenkins" {
+  most_recent = true
+
+  # If we change the AWS Account in which test are run, update this value.
+  owners = ["${data.aws_caller_identity.current_account.account_id}"]
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "is-public"
+    values = ["false"]   // flip to public when ready for release
+  }
+
+  filter {
+    name   = "name"
+    values = ["jenkins-amazon-linux-*"]
+  }
+}
+
 # Master Server
 resource "aws_instance" "ec2_jenkins_master" {
-  ami                    = "${var.ami_id}"
+  ami                    = "${data.aws_ami.jenkins.image_id}"
   subnet_id              = "${var.public_subnets[0]}"
   instance_type          = "${var.instance_type}"
   user_data              = "${var.user_data}"
