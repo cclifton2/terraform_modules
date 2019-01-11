@@ -64,7 +64,7 @@ linux_slave_count | The number of Jenkins Linux Build Slaves to provision
 win_slave_count | The number of Jenkins Windows Build Slaves to provision
 instance_type_master | The instance type to be used on the master instance. Default: t2.micro
 instance_type_slave | The instance type to be used on the slave instance(s). Default: t2.micro
-setup_data | The script used to setup the Jenkins master instance and install plugins.  Default: ./modules/jenkins-master/setup.tpl 
+setup_data | The script used to setup the Jenkins master instance and install plugins.  Default: ./modules/jenkins-master/setup.sh 
 http_port | The port to use for HTTP traffic to Jenkins
 jnlp_port | The Port to use for Jenkins master to slave communication bewtween instances
 plugins | The list of plugins to pre-install on the master instance. Default: ["git", "xunit"]

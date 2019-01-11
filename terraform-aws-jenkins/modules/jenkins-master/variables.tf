@@ -24,6 +24,11 @@ variable "subnet_ids" {
   type        = "list"
 }
 
+variable "public_subnets" {
+  description = "Subnets for ec2 instances"
+  type        = "list"
+}
+
 variable "private_subnets" {
   description = "Subnets for ec2 instances"
   type        = "list"

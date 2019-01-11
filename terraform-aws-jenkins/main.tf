@@ -36,11 +36,25 @@ data "aws_ami" "jenkins" {
   }
 }
 
+resource "null_resource" "jenkins_master" {
+  # Changes to any instance of the cluster requires re-provisioning
+  triggers {
+    cluster_instance_ids = "${join(",", aws_instance.cluster.*.id)}"
+  }
+}
+
+resource "null_resource" "jenkins_slave" {
+  # Changes to any instance of the cluster requires re-provisioning
+  triggers {
+    cluster_instance_ids = "${join(",", aws_instance.cluster.*.id)}"
+  }
+}
+
 # Jenkins Master Instance
 module "jenkins-master" {
   source = "./modules/jenkins-master"
 
-  vpc_id = "${data.terraform_remote_state.vpc.vpc_id}"
+  vpc_id = "vpc-069291a71af26445c" #"${data.terraform_remote_state.vpc.vpc_id}"
 
   name          = "${var.name == "" ? "jenkins-master" : join("-", list(var.name, "jenkins-master"))}"
   alb_prefix    = "${var.name == "" ? "jenkins" : join("-", list(var.name, "jenkins"))}"
@@ -57,15 +71,16 @@ module "jenkins-master" {
   ssh_key_path                = "${var.ssh_key_path}"
 
   # Config used by the Application Load Balancer
-  subnet_ids              = "${data.terraform_remote_state.vpc.public_subnets[0]}"
-  private_subnets         = "${data.terraform_remote_state.vpc.private_subnets[0]}"
+  subnet_ids              = "${data.terraform_remote_state.vpc.public_subnets}"
+  private_subnets         = "${data.terraform_remote_state.vpc.private_subnets}"
+  public_subnets          = "${data.terraform_remote_state.vpc.public_subnets}"
   aws_ssl_certificate_arn = "${var.aws_ssl_certificate_arn}"
   dns_zone                = "${var.dns_zone}"
   app_dns_name            = "${var.app_dns_name}"
 }
 
 data "template_file" "setup_data_master" {
-  template = "${file("${path.module}/modules/jenkins-master/setup.tpl")}"
+  template = "${file("${path.module}/modules/jenkins-master/setup.sh")}"
 
   vars = {
     jnlp_port = "${var.jnlp_port}"
@@ -90,6 +105,9 @@ module "jenkins-linux-slave" {
 
   ssh_key_name = "${var.ssh_key_name}"
   ssh_key_path = "${var.ssh_key_path}"
+
+  private_subnets = "${data.terraform_remote_state.vpc.private_subnets}"
+  public_subnets  = "${data.terraform_remote_state.vpc.public_subnets}"
 }
 
 # data "aws_vpc" "default" {

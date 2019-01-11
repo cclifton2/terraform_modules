@@ -38,7 +38,7 @@ resource "aws_elb" "ourapp" {
 # Master Server
 resource "aws_instance" "ec2_jenkins_master" {
   ami                    = "${var.ami_id}"
-  subnet_id              = "${var.private_subnets}"
+  subnet_id              = "${var.public_subnets[0]}"
   instance_type          = "${var.instance_type}"
   user_data              = "${var.user_data}"
   key_name               = "${var.ssh_key_name}"

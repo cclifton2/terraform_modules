@@ -11,7 +11,7 @@ variable "jenkins_master_port" {
 }
 
 variable "environment" {
-  description = "The environement tag to add to Jenkins master instance",
+  description = "The environement tag to add to Jenkins master instance"
   default     = ""
 }
 
@@ -43,8 +43,17 @@ variable "jenkins_security_group_id" {
 }
 
 variable "tags" {
-  type = "map"
+  type        = "map"
   description = "Supply tags you want added to all resources"
-  default = {
-  }
+  default     = {}
+}
+
+variable "public_subnets" {
+  description = "Subnets for ec2 instances"
+  type        = "list"
+}
+
+variable "private_subnets" {
+  description = "Subnets for ec2 instances"
+  type        = "list"
 }

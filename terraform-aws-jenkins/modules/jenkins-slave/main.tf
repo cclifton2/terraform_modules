@@ -28,11 +28,13 @@ data "aws_caller_identity" "current_account" {}
 
 # Jenkins Slaves
 resource "aws_instance" "ec2_jenkins_slave" {
-  count                  = "${var.count}"
-  ami                    = "ami-08270fb1d885ce96f"                                                                                                                    #"${var.ami_id == "" ? data.aws_ami.jenkins_linux_slave.image_id : var.ami_id}"
-  instance_type          = "${var.instance_type}"
-  key_name               = "${var.ssh_key_name}"
-  monitoring             = true
+  count         = "${var.count}"
+  ami           = "ami-08270fb1d885ce96f"    #"${var.ami_id == "" ? data.aws_ami.jenkins_linux_slave.image_id : var.ami_id}"
+  instance_type = "${var.instance_type}"
+  key_name      = "${var.ssh_key_name}"
+  monitoring    = true
+  subnet_id     = "${var.public_subnets[0]}"
+
   vpc_security_group_ids = ["${var.jenkins_security_group_id}"]
   tags                   = "${merge(map("Name", format("%s-%d", var.name, count.index+1)), map("Terraform", "true"), map("Environment", var.environment), var.tags)}"
 
@@ -106,7 +108,7 @@ resource "aws_instance" "ec2_jenkins_slave" {
 }
 
 data "template_file" "bootstrap" {
-  template = "${file("${path.module}/setup.tpl")}"
+  template = "${file("${path.module}/setup.sh")}"
 
   vars {
     jenkins_master_url = "${local.jenkins_master_url}"
